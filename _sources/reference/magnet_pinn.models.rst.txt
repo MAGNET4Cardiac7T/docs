@@ -1,0 +1,23 @@
+﻿magnet\_pinn.models
+===================
+
+.. automodule:: magnet_pinn.models
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

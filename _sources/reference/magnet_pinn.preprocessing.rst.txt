@@ -1,0 +1,23 @@
+﻿magnet\_pinn.preprocessing
+==========================
+
+.. automodule:: magnet_pinn.preprocessing
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

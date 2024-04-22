@@ -1,0 +1,23 @@
+﻿magnet\_pinn.physics
+====================
+
+.. automodule:: magnet_pinn.physics
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
