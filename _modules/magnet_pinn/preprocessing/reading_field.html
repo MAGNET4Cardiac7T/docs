@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magnet_pinn.preprocessing.reading_field &mdash; magnet-pinn 0.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dynabench.css?v=56ba74db" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=e3a6060d"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            magnet-pinn
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../papers.html">Paper List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results.html">Benchmark Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">magnet-pinn</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magnet_pinn.preprocessing.reading_field</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for magnet_pinn.preprocessing.reading_field</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">NAME</span>
+<span class="sd">    reading_field.py</span>
+
+<span class="sd">DESCRIPTION</span>
+<span class="sd">    This module contains classes for reading field values from the .h5 files</span>
+
+<span class="sd">CLASSES</span>
+<span class="sd">    FieldReaderFactory</span>
+<span class="sd">    FieldReader</span>
+<span class="sd">    GridReader</span>
+<span class="sd">    PointReader</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">fnmatch</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">h5py</span> <span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">einops</span> <span class="kn">import</span> <span class="n">rearrange</span>
+
+<span class="n">E_FIELD_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;E-Field&quot;</span>
+<span class="n">H_FIELD_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;H-Field&quot;</span>
+<span class="n">POSISTIONS_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;Position&quot;</span>
+<span class="n">X_BOUNDS_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;Mesh line x&quot;</span>
+<span class="n">Y_BOUNDS_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;Mesh line y&quot;</span>
+<span class="n">Z_BOUNDS_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;Mesh line z&quot;</span>
+
+<span class="n">FIELD_DIR_PATH</span> <span class="o">=</span> <span class="p">{</span><span class="n">E_FIELD_DATABASE_KEY</span><span class="p">:</span> <span class="s2">&quot;E_field&quot;</span><span class="p">,</span> <span class="n">H_FIELD_DATABASE_KEY</span><span class="p">:</span> <span class="s2">&quot;H_field&quot;</span><span class="p">}</span>
+<span class="n">H5_FILENAME_PATTERN</span> <span class="o">=</span> <span class="s2">&quot;*AC*.h5&quot;</span>
+
+
+<div class="viewcode-block" id="FieldReaderFactory">
+<a class="viewcode-back" href="../../../reference/magnet_pinn.preprocessing.reading_field.html#magnet_pinn.preprocessing.FieldReaderFactory">[docs]</a>
+<span class="k">class</span> <span class="nc">FieldReaderFactory</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Factory class for creating FieldReader objects</span>
+
+<span class="sd">    This class checks the type of the files we have in the field directory</span>
+<span class="sd">    and defines the reader we need</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    field_type: str</span>
+<span class="sd">        Type of the field we read and key of the field database in the h5 file.</span>
+<span class="sd">        Also is used to define the field directory name.</span>
+<span class="sd">    files_list: list</span>
+<span class="sd">        The list of files paths with field values which has to be read.</span>
+
+<span class="sd">    Assumed Directory structue</span>
+<span class="sd">    --------------------------</span>
+<span class="sd">    The simulation directory consists of different field directories</span>
+
+<span class="sd">    simulation_dir/</span>
+
+<span class="sd">    |- E_field/</span>
+<span class="sd">    |  |- e-field*(f=*) [AC*]*.h5</span>
+<span class="sd">    |- H_field/</span>
+<span class="sd">    |  |- e-field*(f=*) [AC*]*.h5</span>
+<span class="sd">    |- SAR/</span>
+<span class="sd">    |  |- SAR*(f=*) [AC*]*.h5</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __init__(simulation_dir_path, field_type)</span>
+<span class="sd">        It collects the list of source files and check if they exist.</span>
+<span class="sd">    create_reader(keep_grid_output_format)</span>
+<span class="sd">        Creates a reader for the field</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">simulation_dir_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">E_FIELD_DATABASE_KEY</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It collects the list of source files and check if they exist.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        simulation_dir_path: str</span>
+<span class="sd">            Path to the simulation directory</span>
+<span class="sd">        field_type: str</span>
+<span class="sd">            Field type</span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        Exception</span>
+<span class="sd">            If there are no field values for the simulation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_type</span> <span class="o">=</span> <span class="n">field_type</span>
+
+        <span class="n">field_dir_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">simulation_dir_path</span><span class="p">,</span> <span class="n">FIELD_DIR_PATH</span><span class="p">[</span><span class="n">field_type</span><span class="p">])</span>
+        <span class="n">dir_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">field_dir_path</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span>
+                <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">field_dir_path</span><span class="p">)),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files_list</span> <span class="o">=</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">dir_files</span><span class="p">,</span> <span class="n">H5_FILENAME_PATTERN</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                No field values found for the simulation</span>
+<span class="s2">                </span><span class="si">{</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">simulation_dir_path</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">                for the </span><span class="si">{</span><span class="n">field_type</span><span class="si">}</span><span class="s2"> field</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="FieldReaderFactory.create_reader">
+<a class="viewcode-back" href="../../../reference/magnet_pinn.preprocessing.reading_field.html#magnet_pinn.preprocessing.FieldReaderFactory.create_reader">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_grid_output_format</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Two different types are asumed to be read:</span>
+
+<span class="sd">        1. Grid type</span>
+<span class="sd">            Uses field type as a databae key and also use</span>
+<span class="sd">            `X_BOUNDS_DATABASE_KEY`, `Y_BOUNDS_DATABASE_KEY`, `Z_BOUNDS_DATABASE_KEY`</span>
+<span class="sd">            as keys for the coordinates.</span>
+<span class="sd">        2. Just points</span>
+<span class="sd">            Field values are under the field type key and the coordinates are under</span>
+<span class="sd">            `Positions` key.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        format_points_list: bool</span>
+<span class="sd">            if True, the reader will return the data in the pointslist form</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        FieldReader</span>
+<span class="sd">            prepared reader</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__is_grid</span><span class="p">():</span>
+            <span class="n">instance</span> <span class="o">=</span>  <span class="n">GridReader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_type</span><span class="p">)</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">is_grid</span> <span class="o">=</span> <span class="n">keep_grid_output_format</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="n">PointReader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_type</span><span class="p">)</span>
+    
+        <span class="k">return</span> <span class="n">instance</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__is_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the `POSISTIONS_DATABASE_KEY` key is used in h5 file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">database_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        
+        <span class="k">return</span> <span class="n">POSISTIONS_DATABASE_KEY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">database_keys</span></div>
+
+
+
+<div class="viewcode-block" id="FieldReader">
+<a class="viewcode-back" href="../../../reference/magnet_pinn.preprocessing.reading_field.html#magnet_pinn.preprocessing.FieldReader">[docs]</a>
+<span class="k">class</span> <span class="nc">FieldReader</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class for reading field values</span>
+
+<span class="sd">    The classs is fully responsible for extracting field values and point coordinates</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    files_list: list</span>
+<span class="sd">        The list of files paths which should be read</span>
+<span class="sd">    field_type: str</span>
+<span class="sd">        The type of the field we read</span>
+<span class="sd">    _coordinates: np.ndarray</span>
+<span class="sd">        The coordinates of the field points</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __init__(files_list, field_type)</span>
+<span class="sd">        It reads coordinates and validates if the coordinates are the same in all files</span>
+<span class="sd">    extract_data()</span>
+<span class="sd">        Extracts field values from the files</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">field_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It reads coordinates and makes validation</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        files_list: list</span>
+<span class="sd">            The list of files paths which should be processed</span>
+<span class="sd">        field_type: str</span>
+<span class="sd">            The type of the field we process</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">files_list</span> <span class="o">=</span> <span class="n">files_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_type</span> <span class="o">=</span> <span class="n">field_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate_coordinates</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__validate_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It validates coordinates of the field points</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">other_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">other_coordinates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_coordinates</span><span class="p">(</span><span class="n">other_file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_coordinates</span><span class="p">(</span><span class="n">other_coordinates</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Different positions in the field value file </span><span class="si">{</span><span class="n">other_file</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+    <span class="nd">@property</span>        
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_read_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads coordinates from the h5 file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path: str</span>
+<span class="sd">            The path to the h5 file with field values</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Union[Tuple, np.array]</span>
+<span class="sd">            The coordinates of the field points</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_check_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_coordinates</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the given coordinates are the same as the coordinates saved in the instance</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_coordinates: Union[Tuple, np.array]</span>
+<span class="sd">            The coordinates to compare with</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the coordinates are the same</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="FieldReader.extract_data">
+<a class="viewcode-back" href="../../../reference/magnet_pinn.preprocessing.reading_field.html#magnet_pinn.preprocessing.FieldReader.extract_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts field values from the files</span>
+
+<span class="sd">        This is a main method of the class. </span>
+<span class="sd">        It reads field values from files and compose it into a single array</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.array</span>
+<span class="sd">            The field values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">field_components</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__read_field_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">files_list</span>
+        <span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compose_field_components</span><span class="p">(</span><span class="n">field_components</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__read_field_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read on field component from the .h5 file</span>
+
+<span class="sd">        It reads complex data array and compose it into a single result array</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path: str</span>
+<span class="sd">            The path to the h5 file with field values</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.array</span>
+<span class="sd">            The field values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">field_type</span><span class="p">][:]</span>
+
+        <span class="n">Ex</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">][</span><span class="s2">&quot;re&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">][</span><span class="s2">&quot;im&quot;</span><span class="p">]</span>
+        <span class="n">Ey</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">][</span><span class="s2">&quot;re&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">][</span><span class="s2">&quot;im&quot;</span><span class="p">]</span>
+        <span class="n">Ez</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">][</span><span class="s2">&quot;re&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">][</span><span class="s2">&quot;im&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">rearrange</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">Ex</span><span class="p">,</span> <span class="n">Ey</span><span class="p">,</span> <span class="n">Ez</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compose_field_pattern</span>
+        <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_compose_field_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_compose_field_components</span><span class="p">(</span><span class="n">field_components</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Here we compose together field components from different files.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        field_components: List</span>
+<span class="sd">            List of field components</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.array</span>
+<span class="sd">            The field values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="GridReader">
+<a class="viewcode-back" href="../../../reference/magnet_pinn.preprocessing.reading_field.html#magnet_pinn.preprocessing.GridReader">[docs]</a>
+<span class="k">class</span> <span class="nc">GridReader</span><span class="p">(</span><span class="n">FieldReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class for reading field values in the grid form, i.e the field values are given on the mesh lines</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        is_grid: bool</span>
+<span class="sd">            Flag set to true, as the field values are given in the grid form</span>
+<span class="sd">        files_list: list</span>
+<span class="sd">            The list of files paths which should be read</span>
+<span class="sd">        field_type: str</span>
+<span class="sd">            The type of the field we read</span>
+<span class="sd">        _coordinates: np.ndarray</span>
+<span class="sd">            The coordinates of the field points</span>
+<span class="sd">        </span>
+<span class="sd">        Methods</span>
+<span class="sd">        -------</span>
+<span class="sd">        __init__(files_list, field_type)</span>
+<span class="sd">            It reads coordinates and validates if the coordinates are the same in all files</span>
+<span class="sd">        extract_data()</span>
+<span class="sd">            Extracts field values from the files</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">is_grid</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_read_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read coordinates from the h5 file</span>
+
+<span class="sd">        In the grid case coordinates are given by the mesh lines. </span>
+<span class="sd">        Their access keys are saved in the </span>
+<span class="sd">        `X_BOUNDS_DATABASE_KEY`, `Y_BOUNDS_DATABASE_KEY`, `Z_BOUNDS_DATABASE_KEY`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path: str</span>
+<span class="sd">            The path to the h5 file with field values</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tuple</span>
+<span class="sd">            The x, y, z coordinate bounds</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">x_bounds</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">X_BOUNDS_DATABASE_KEY</span><span class="p">][:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">y_bounds</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">Y_BOUNDS_DATABASE_KEY</span><span class="p">][:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">z_bounds</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">Z_BOUNDS_DATABASE_KEY</span><span class="p">][:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x_bounds</span><span class="p">,</span> <span class="n">y_bounds</span><span class="p">,</span> <span class="n">z_bounds</span>
+    
+    <span class="k">def</span> <span class="nf">_check_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_coordinates</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the given coordinates are the same as the coordinates saved in the instance</span>
+<span class="sd">        In the grid case we check if all bounds are the same.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_coordinates: Tuple</span>
+<span class="sd">            The coordinates to compare with</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x_default_bound</span><span class="p">,</span> <span class="n">y_default_bound</span><span class="p">,</span> <span class="n">z_default_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span>
+        <span class="n">x_other_bound</span><span class="p">,</span> <span class="n">y_other_bound</span><span class="p">,</span> <span class="n">z_other_bound</span> <span class="o">=</span> <span class="n">other_coordinates</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">x_default_bound</span><span class="p">,</span> <span class="n">x_other_bound</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">y_default_bound</span><span class="p">,</span> <span class="n">y_other_bound</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">z_default_bound</span><span class="p">,</span> <span class="n">z_other_bound</span><span class="p">)</span>
+            <span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It suppose just to give back the coordinates list. But if the grid trigger is </span>
+<span class="sd">        off, then we give the data back in the pointslist form, that is why we create</span>
+<span class="sd">        a grid form and reshape it into the form of the pointslist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_grid</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span>
+        
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span>
+        <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">rearrange</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">zz</span><span class="p">],</span>
+            <span class="s2">&quot;ax x y z -&gt; (x y z) ax&quot;</span>
+        <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_compose_field_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;ax z y x -&gt; ax x y z&quot;</span>
+
+    
+    <span class="k">def</span> <span class="nf">_compose_field_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_components</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compose together field components from different files</span>
+
+<span class="sd">        In the grid regime of work we give back the grid data, but if </span>
+<span class="sd">        the grid trigger is off, we will give back the data in the pointslist form.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        field_components: List</span>
+<span class="sd">            List of field components</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.array</span>
+<span class="sd">            The field values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_grid</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">rearrange</span><span class="p">(</span>
+                <span class="n">field_components</span><span class="p">,</span>
+                <span class="s2">&quot;components ax x y z -&gt; ax x y z components&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">rearrange</span><span class="p">(</span>
+                <span class="n">field_components</span><span class="p">,</span>
+                <span class="s2">&quot;components ax x y z -&gt; (x y z) ax components&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PointReader">
+<a class="viewcode-back" href="../../../reference/magnet_pinn.preprocessing.reading_field.html#magnet_pinn.preprocessing.PointReader">[docs]</a>
+<span class="k">class</span> <span class="nc">PointReader</span><span class="p">(</span><span class="n">FieldReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for reading field values in the pointslist form, i.e the field values are given at arbitrary point locations.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    files_list: list</span>
+<span class="sd">        The list of files paths which should be read</span>
+<span class="sd">    field_type: str</span>
+<span class="sd">        The type of the field we read</span>
+<span class="sd">    _coordinates: np.ndarray</span>
+<span class="sd">        The coordinates of the field points</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __init__(files_list, field_type)</span>
+<span class="sd">        It reads coordinates and validates if the coordinates are the same in all files</span>
+<span class="sd">    extract_data()</span>
+<span class="sd">        Extracts field values from the files</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_read_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read coordinates from the h5 file</span>
+
+<span class="sd">        In the pointslist case coordinates have no structure so we just compose them </span>
+<span class="sd">        as a list of points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">POSISTIONS_DATABASE_KEY</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">][:]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">POSISTIONS_DATABASE_KEY</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">][:]</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">POSISTIONS_DATABASE_KEY</span><span class="p">][</span><span class="s2">&quot;z&quot;</span><span class="p">][:]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">rearrange</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>
+            <span class="s2">&quot;ax batch -&gt; batch ax&quot;</span>
+        <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_check_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_coordinates</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the given coordinates are the same as the coordinates saved in the instance</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_coordinates: np.array</span>
+<span class="sd">            The coordinates to compare with</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the coordinates are the same</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span><span class="p">,</span> <span class="n">other_coordinates</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_compose_field_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;ax batch -&gt; batch ax&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">_compose_field_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_components</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compose together field components from different files</span>
+
+<span class="sd">        Just return data as a lisst of points measurements.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        field_components: List</span>
+<span class="sd">            List of field components</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.array</span>
+<span class="sd">            The field values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">rearrange</span><span class="p">(</span>
+            <span class="n">field_components</span><span class="p">,</span>
+            <span class="s2">&quot;components batch ax -&gt; batch ax components&quot;</span>
+        <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Andrzej Dulny.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

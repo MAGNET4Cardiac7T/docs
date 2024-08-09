@@ -4,20 +4,27 @@
 .. automodule:: magnet_pinn.preprocessing
 
    
-   
-   
+   .. rubric:: Classes
 
+   .. autosummary::
    
+      FieldReaderFactory
+      GridPreprocessing
+      GridReader
+      MeshVoxelizer
+      PointPreprocessing
+      PointReader
+      PropertyReader
+      Simulation
    
-   
+.. rubric:: Modules
 
-   
-   
-   
+.. autosummary::
+   :toctree:
+   :recursive:
 
-   
-   
-   
-
-
-
+   preprocessing
+   reading_field
+   reading_properties
+   simulation
+   voxelizing_mesh

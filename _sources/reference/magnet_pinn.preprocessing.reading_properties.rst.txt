@@ -1,0 +1,19 @@
+magnet\_pinn.preprocessing.reading\_properties
+==============================================
+
+.. automodule:: magnet_pinn.preprocessing.reading_properties
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      load_mesh
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      PropertyReader
+      Trimesh
+   

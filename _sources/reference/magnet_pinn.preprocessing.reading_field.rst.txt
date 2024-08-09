@@ -1,0 +1,24 @@
+magnet\_pinn.preprocessing.reading\_field
+=========================================
+
+.. automodule:: magnet_pinn.preprocessing.reading_field
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      abstractmethod
+      rearrange
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ABC
+      FieldReader
+      FieldReaderFactory
+      File
+      GridReader
+      PointReader
+   

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magnet_pinn.preprocessing &mdash; magnet-pinn 0.0.1 documentation</title>
+  <title>magnet_pinn.preprocessing &mdash; magnet-pinn 0.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -17,7 +17,7 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../_static/documentation_options.js?v=e3a6060d"></script>
         <script src="../_static/doctools.js?v=9a2dae69"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../_static/design-tabs.js?v=36754332"></script>
@@ -25,7 +25,7 @@
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="magnet_pinn.physics" href="magnet_pinn.physics.html" />
+    <link rel="next" title="magnet_pinn.preprocessing.preprocessing" href="magnet_pinn.preprocessing.preprocessing.html" />
     <link rel="prev" title="magnet_pinn.models" href="magnet_pinn.models.html" /> 
 </head>
 
@@ -56,7 +56,49 @@
 <li class="toctree-l1"><a class="reference internal" href="../results.html">Benchmark Results</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="magnet_pinn.models.html">magnet_pinn.models</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">magnet_pinn.preprocessing</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">magnet_pinn.preprocessing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#magnet_pinn.preprocessing.FieldReaderFactory"><code class="docutils literal notranslate"><span class="pre">FieldReaderFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.FieldReaderFactory.create_reader"><code class="docutils literal notranslate"><span class="pre">FieldReaderFactory.create_reader()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#magnet_pinn.preprocessing.GridPreprocessing"><code class="docutils literal notranslate"><span class="pre">GridPreprocessing</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#magnet_pinn.preprocessing.GridReader"><code class="docutils literal notranslate"><span class="pre">GridReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.GridReader.coordinates"><code class="docutils literal notranslate"><span class="pre">GridReader.coordinates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.GridReader.is_grid"><code class="docutils literal notranslate"><span class="pre">GridReader.is_grid</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#magnet_pinn.preprocessing.MeshVoxelizer"><code class="docutils literal notranslate"><span class="pre">MeshVoxelizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.MeshVoxelizer.process_mesh"><code class="docutils literal notranslate"><span class="pre">MeshVoxelizer.process_mesh()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#magnet_pinn.preprocessing.PointPreprocessing"><code class="docutils literal notranslate"><span class="pre">PointPreprocessing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.PointPreprocessing.coordinates"><code class="docutils literal notranslate"><span class="pre">PointPreprocessing.coordinates</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#magnet_pinn.preprocessing.PointReader"><code class="docutils literal notranslate"><span class="pre">PointReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.PointReader.coordinates"><code class="docutils literal notranslate"><span class="pre">PointReader.coordinates</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#magnet_pinn.preprocessing.PropertyReader"><code class="docutils literal notranslate"><span class="pre">PropertyReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.PropertyReader.read_meshes"><code class="docutils literal notranslate"><span class="pre">PropertyReader.read_meshes()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#magnet_pinn.preprocessing.Simulation"><code class="docutils literal notranslate"><span class="pre">Simulation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.Simulation.e_field"><code class="docutils literal notranslate"><span class="pre">Simulation.e_field</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.Simulation.features"><code class="docutils literal notranslate"><span class="pre">Simulation.features</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.Simulation.h_field"><code class="docutils literal notranslate"><span class="pre">Simulation.h_field</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.Simulation.name"><code class="docutils literal notranslate"><span class="pre">Simulation.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.Simulation.object_masks"><code class="docutils literal notranslate"><span class="pre">Simulation.object_masks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#magnet_pinn.preprocessing.Simulation.path"><code class="docutils literal notranslate"><span class="pre">Simulation.path</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magnet_pinn.preprocessing.preprocessing.html">magnet_pinn.preprocessing.preprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magnet_pinn.preprocessing.reading_field.html">magnet_pinn.preprocessing.reading_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magnet_pinn.preprocessing.reading_properties.html">magnet_pinn.preprocessing.reading_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magnet_pinn.preprocessing.simulation.html">magnet_pinn.preprocessing.simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magnet_pinn.preprocessing.voxelizing_mesh.html">magnet_pinn.preprocessing.voxelizing_mesh</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="magnet_pinn.physics.html">magnet_pinn.physics</a></li>
 </ul>
 </li>
@@ -90,6 +132,456 @@
   <section id="module-magnet_pinn.preprocessing">
 <span id="magnet-pinn-preprocessing"></span><h1>magnet_pinn.preprocessing<a class="headerlink" href="#module-magnet_pinn.preprocessing" title="Link to this heading"></a></h1>
 <p>A module for preprocessing data for the magnet_pinn package.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#magnet_pinn.preprocessing.FieldReaderFactory" title="magnet_pinn.preprocessing.FieldReaderFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldReaderFactory</span></code></a>(simulation_dir_path[, ...])</p></td>
+<td><p>Factory class for creating FieldReader objects</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#magnet_pinn.preprocessing.GridPreprocessing" title="magnet_pinn.preprocessing.GridPreprocessing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GridPreprocessing</span></code></a>(batch_dir_path, ...)</p></td>
+<td><p>Class for preprocessing data for grid-based models.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#magnet_pinn.preprocessing.GridReader" title="magnet_pinn.preprocessing.GridReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GridReader</span></code></a>(files_list, field_type)</p></td>
+<td><p>Class for reading field values in the grid form, i.e the field values are given on the mesh lines</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#magnet_pinn.preprocessing.MeshVoxelizer" title="magnet_pinn.preprocessing.MeshVoxelizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MeshVoxelizer</span></code></a>(voxel_size, x_unique, ...)</p></td>
+<td><p>The main voxelizer class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#magnet_pinn.preprocessing.PointPreprocessing" title="magnet_pinn.preprocessing.PointPreprocessing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PointPreprocessing</span></code></a>(batch_dir_path, ...)</p></td>
+<td><p>Class for preprocessing data for point cloud-based models.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#magnet_pinn.preprocessing.PointReader" title="magnet_pinn.preprocessing.PointReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PointReader</span></code></a>(files_list, field_type)</p></td>
+<td><p>Class for reading field values in the pointslist form, i.e the field values are given at arbitrary point locations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#magnet_pinn.preprocessing.PropertyReader" title="magnet_pinn.preprocessing.PropertyReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertyReader</span></code></a>(properties_dir_path)</p></td>
+<td><p>This class is responsible for reading the properties of the materials.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#magnet_pinn.preprocessing.Simulation" title="magnet_pinn.preprocessing.Simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Simulation</span></code></a>(name, path[, e_field, h_field, ...])</p></td>
+<td><p>A dataclass for storing the data of one numerical simulation of EM fields.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.FieldReaderFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magnet_pinn.preprocessing.</span></span><span class="sig-name descname"><span class="pre">FieldReaderFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation_dir_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'E-Field'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/reading_field.html#FieldReaderFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.FieldReaderFactory" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Factory class for creating FieldReader objects</p>
+<p>This class checks the type of the files we have in the field directory
+and defines the reader we need</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>field_type: str</strong></dt><dd><p>Type of the field we read and key of the field database in the h5 file.
+Also is used to define the field directory name.</p>
+</dd>
+<dt><strong>files_list: list</strong></dt><dd><p>The list of files paths with field values which has to be read.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>__init__(simulation_dir_path, field_type)</strong></p></td>
+<td><p>It collects the list of source files and check if they exist.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>create_reader(keep_grid_output_format)</strong></p></td>
+<td><p>Creates a reader for the field</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.FieldReaderFactory.create_reader">
+<span class="sig-name descname"><span class="pre">create_reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keep_grid_output_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/reading_field.html#FieldReaderFactory.create_reader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.FieldReaderFactory.create_reader" title="Link to this definition"></a></dt>
+<dd><p>Two different types are asumed to be read:</p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>Grid type</dt><dd><p>Uses field type as a databae key and also use
+<cite>X_BOUNDS_DATABASE_KEY</cite>, <cite>Y_BOUNDS_DATABASE_KEY</cite>, <cite>Z_BOUNDS_DATABASE_KEY</cite>
+as keys for the coordinates.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Just points</dt><dd><p>Field values are under the field type key and the coordinates are under
+<cite>Positions</cite> key.</p>
+</dd>
+</dl>
+</li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>format_points_list: bool</strong></dt><dd><p>if True, the reader will return the data in the pointslist form</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>FieldReader</dt><dd><p>prepared reader</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.GridPreprocessing">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magnet_pinn.preprocessing.</span></span><span class="sig-name descname"><span class="pre">GridPreprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_dir_path:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir_path:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voxel_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_dtype:</span> <span class="pre">~numpy.dtype</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.complex64'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/preprocessing.html#GridPreprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.GridPreprocessing" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="magnet_pinn.preprocessing.preprocessing.html#magnet_pinn.preprocessing.preprocessing.Preprocessing" title="magnet_pinn.preprocessing.preprocessing.Preprocessing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Preprocessing</span></code></a></p>
+<p>Class for preprocessing data for grid-based models.</p>
+<p>The class is responsible for reading and processing antennas and subjects data in a voxel grid manner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>voxel_size</strong><span class="classifier">int</span></dt><dd><p>the size of the voxel for creating a grid</p>
+</dd>
+<dt><strong>positions_min</strong><span class="classifier">np.array</span></dt><dd><p>the minimum values of the extent</p>
+</dd>
+<dt><strong>positions_max</strong><span class="classifier">np.array</span></dt><dd><p>the maximum values of the extent</p>
+</dd>
+<dt><strong>field_dtype</strong><span class="classifier">np.dtype</span></dt><dd><p>type of saving field data</p>
+</dd>
+<dt><strong>simulations_dir_path</strong><span class="classifier">str</span></dt><dd><p>Simulations location in the batch directory</p>
+</dd>
+<dt><strong>out_simmulations_dir_path</strong><span class="classifier">str</span></dt><dd><p>Processed simulations location in the output directory</p>
+</dd>
+<dt><strong>out_antenna_dir_path</strong><span class="classifier">str</span></dt><dd><p>Processed antenna location in the output directory</p>
+</dd>
+<dt><strong>dipoles_properties</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>Antenna feature dataframe including dipoles meshes files</p>
+</dd>
+<dt><strong>dipoles_meshes</strong><span class="classifier">list</span></dt><dd><p>A list of dipoles meshes</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">_dipoles_features</span></code><span class="classifier">np.array</span></dt><dd><p>A getter for the dipoles features, caclulates it when the user first needs it together with masks.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">_dipoles_masks</span></code><span class="classifier">np.array</span></dt><dd><p>A getter for the dipoles masks, caclulates it when the user first needs it together with features.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>__init__(batch_dir_path: str, output_dir_path: str, voxel_size: int = STANDARD_VOXEL_SIZE, field_dtype: np.dtype = np.complex64)</strong></p></td>
+<td><p>Initializes the grid preprocessing object.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>process_simulations(simulation_names: Union[List[str], None] = None)</strong></p></td>
+<td><p>Main processing method. It processes all simulations in the batch</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.GridReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magnet_pinn.preprocessing.</span></span><span class="sig-name descname"><span class="pre">GridReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/reading_field.html#GridReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.GridReader" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="magnet_pinn.preprocessing.reading_field.html#magnet_pinn.preprocessing.reading_field.FieldReader" title="magnet_pinn.preprocessing.reading_field.FieldReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldReader</span></code></a></p>
+<p>Class for reading field values in the grid form, i.e the field values are given on the mesh lines</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>is_grid: bool</strong></dt><dd><p>Flag set to true, as the field values are given in the grid form</p>
+</dd>
+<dt><strong>files_list: list</strong></dt><dd><p>The list of files paths which should be read</p>
+</dd>
+<dt><strong>field_type: str</strong></dt><dd><p>The type of the field we read</p>
+</dd>
+<dt><strong>_coordinates: np.ndarray</strong></dt><dd><p>The coordinates of the field points</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>__init__(files_list, field_type)</strong></p></td>
+<td><p>It reads coordinates and validates if the coordinates are the same in all files</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>extract_data()</strong></p></td>
+<td><p>Extracts field values from the files</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py property">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.GridReader.coordinates">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#magnet_pinn.preprocessing.GridReader.coordinates" title="Link to this definition"></a></dt>
+<dd><p>It suppose just to give back the coordinates list. But if the grid trigger is 
+off, then we give the data back in the pointslist form, that is why we create
+a grid form and reshape it into the form of the pointslist.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.GridReader.is_grid">
+<span class="sig-name descname"><span class="pre">is_grid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#magnet_pinn.preprocessing.GridReader.is_grid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.MeshVoxelizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magnet_pinn.preprocessing.</span></span><span class="sig-name descname"><span class="pre">MeshVoxelizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voxel_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_unique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_unique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_unique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/voxelizing_mesh.html#MeshVoxelizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.MeshVoxelizer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The main voxelizer class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>voxel_size: float</strong></dt><dd><p>The size of the voxel cube.</p>
+</dd>
+<dt><strong>center: np.array</strong></dt><dd><p>an array with float x, y, z center coordinates</p>
+</dd>
+<dt><strong>radius: int</strong></dt><dd><p>a number of voxels we create in each direction</p>
+</dd>
+<dt><strong>bounds: np.array</strong></dt><dd><p>2 * 3 shaped array where the first row saves bottom border for cropping voxelized mesh, and the second row does the same for the top border.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>__init__(voxel_size, x_unique, y_unique, z_unique)</strong></p></td>
+<td><p>Prepare voxelizing parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>process_mesh(mesh)</strong></p></td>
+<td><p>Convert the mesh to a voxel grid.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.MeshVoxelizer.process_mesh">
+<span class="sig-name descname"><span class="pre">process_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Trimesh</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">array</span></span></span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/voxelizing_mesh.html#MeshVoxelizer.process_mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.MeshVoxelizer.process_mesh" title="Link to this definition"></a></dt>
+<dd><p>Convert the mesh to a voxel grid.</p>
+<p>This method does the main job using predefined parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mesh: trimesh.Trimesh</strong></dt><dd><p>The mesh to convert</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>np.array</dt><dd><p>The voxel grid</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.PointPreprocessing">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magnet_pinn.preprocessing.</span></span><span class="sig-name descname"><span class="pre">PointPreprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_dir_path:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir_path:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_dtype:</span> <span class="pre">~numpy.dtype</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.complex64'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/preprocessing.html#PointPreprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.PointPreprocessing" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="magnet_pinn.preprocessing.preprocessing.html#magnet_pinn.preprocessing.preprocessing.Preprocessing" title="magnet_pinn.preprocessing.preprocessing.Preprocessing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Preprocessing</span></code></a></p>
+<p>Class for preprocessing data for point cloud-based models.</p>
+<p>The class is responsible for reading and processing antennas and subjects data in a point cloud manner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>field_dtype</strong><span class="classifier">np.dtype</span></dt><dd><p>type of saving field data</p>
+</dd>
+<dt><strong>simulations_dir_path</strong><span class="classifier">str</span></dt><dd><p>Simulations location in the batch directory</p>
+</dd>
+<dt><strong>out_simmulations_dir_path</strong><span class="classifier">str</span></dt><dd><p>Processed simulations location in the output directory</p>
+</dd>
+<dt><strong>out_antenna_dir_path</strong><span class="classifier">str</span></dt><dd><p>Processed antenna location in the output directory</p>
+</dd>
+<dt><strong>dipoles_properties</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>Antenna feature dataframe including dipoles meshes files</p>
+</dd>
+<dt><strong>dipoles_meshes</strong><span class="classifier">list</span></dt><dd><p>A list of dipoles meshes</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">_dipoles_features</span></code><span class="classifier">np.array</span></dt><dd><p>A getter for the dipoles features, caclulates it when the user first needs it together with masks.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">_dipoles_masks</span></code><span class="classifier">np.array</span></dt><dd><p>A getter for the dipoles masks, caclulates it when the user first needs it together with features.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>__init__(batch_dir_path: str, output_dir_path: str, field_dtype: np.dtype = np.complex64)</strong></p></td>
+<td><p>Initializes the point preprocessing object.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>process_simulations(simulation_names: Union[List[str], None] = None)</strong></p></td>
+<td><p>Main processing method. It processes all simulations in the batch</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py property">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.PointPreprocessing.coordinates">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#magnet_pinn.preprocessing.PointPreprocessing.coordinates" title="Link to this definition"></a></dt>
+<dd><p>Getter for the coordinates</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.PointReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magnet_pinn.preprocessing.</span></span><span class="sig-name descname"><span class="pre">PointReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/reading_field.html#PointReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.PointReader" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="magnet_pinn.preprocessing.reading_field.html#magnet_pinn.preprocessing.reading_field.FieldReader" title="magnet_pinn.preprocessing.reading_field.FieldReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldReader</span></code></a></p>
+<p>Class for reading field values in the pointslist form, i.e the field values are given at arbitrary point locations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>files_list: list</strong></dt><dd><p>The list of files paths which should be read</p>
+</dd>
+<dt><strong>field_type: str</strong></dt><dd><p>The type of the field we read</p>
+</dd>
+<dt><strong>_coordinates: np.ndarray</strong></dt><dd><p>The coordinates of the field points</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>__init__(files_list, field_type)</strong></p></td>
+<td><p>It reads coordinates and validates if the coordinates are the same in all files</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>extract_data()</strong></p></td>
+<td><p>Extracts field values from the files</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py property">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.PointReader.coordinates">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#magnet_pinn.preprocessing.PointReader.coordinates" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.PropertyReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magnet_pinn.preprocessing.</span></span><span class="sig-name descname"><span class="pre">PropertyReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">properties_dir_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/reading_properties.html#PropertyReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.PropertyReader" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class is responsible for reading the properties of the materials.</p>
+<p>We assumed directory mentioned in the <cite>properties_dir_path</cite> has such a structure:</p>
+<div class="line-block">
+<div class="line">./properties_dir_path</div>
+<div class="line-block">
+<div class="line">├── materials.txt</div>
+<div class="line">├── *.stl</div>
+</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>properties_dir_path</strong><span class="classifier">str</span></dt><dd><p>Directory path of the material properties</p>
+</dd>
+<dt><strong>properties</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>Dataframe containing the properties of the materials</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>__init__(properties_dir_path)</strong></p></td>
+<td><p>Reads and saves material properties from the directory</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>read_meshes()</strong></p></td>
+<td><p>Reads the meshes of the materials</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.PropertyReader.read_meshes">
+<span class="sig-name descname"><span class="pre">read_meshes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Trimesh</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/reading_properties.html#PropertyReader.read_meshes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.PropertyReader.read_meshes" title="Link to this definition"></a></dt>
+<dd><p>Reads the meshes of the materials</p>
+<p>The <cite>properties</cite> dataframe should have a column named <cite>file</cite> 
+which contains file names of the meshes we need. So here we read the meshes
+and return them as a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>List</dt><dd><p>List of the meshes of the materials</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.Simulation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magnet_pinn.preprocessing.</span></span><span class="sig-name descname"><span class="pre">Simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_masks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magnet_pinn/preprocessing/simulation.html#Simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magnet_pinn.preprocessing.Simulation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A dataclass for storing the data of one numerical simulation of EM fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>The name of the simulation.</p>
+</dd>
+<dt><strong>path</strong><span class="classifier">str</span></dt><dd><p>The path to the simulation data.</p>
+</dd>
+<dt><strong>e_field</strong><span class="classifier">np.array, optional</span></dt><dd><p>The electric field data.</p>
+</dd>
+<dt><strong>h_field</strong><span class="classifier">np.array, optional</span></dt><dd><p>The magnetic field data.</p>
+</dd>
+<dt><strong>object_masks</strong><span class="classifier">np.array, optional</span></dt><dd><p>The object masks.</p>
+</dd>
+<dt><strong>features</strong><span class="classifier">np.array, optional</span></dt><dd><p>The physical features - permittivity, permeability, conductivity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.Simulation.e_field">
+<span class="sig-name descname"><span class="pre">e_field</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#magnet_pinn.preprocessing.Simulation.e_field" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.Simulation.features">
+<span class="sig-name descname"><span class="pre">features</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#magnet_pinn.preprocessing.Simulation.features" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.Simulation.h_field">
+<span class="sig-name descname"><span class="pre">h_field</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#magnet_pinn.preprocessing.Simulation.h_field" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.Simulation.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#magnet_pinn.preprocessing.Simulation.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.Simulation.object_masks">
+<span class="sig-name descname"><span class="pre">object_masks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#magnet_pinn.preprocessing.Simulation.object_masks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magnet_pinn.preprocessing.Simulation.path">
+<span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#magnet_pinn.preprocessing.Simulation.path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p class="rubric">Modules</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="magnet_pinn.preprocessing.preprocessing.html#module-magnet_pinn.preprocessing.preprocessing" title="magnet_pinn.preprocessing.preprocessing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocessing</span></code></a></p></td>
+<td><p>NAME</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="magnet_pinn.preprocessing.reading_field.html#module-magnet_pinn.preprocessing.reading_field" title="magnet_pinn.preprocessing.reading_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reading_field</span></code></a></p></td>
+<td><p>NAME</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="magnet_pinn.preprocessing.reading_properties.html#module-magnet_pinn.preprocessing.reading_properties" title="magnet_pinn.preprocessing.reading_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reading_properties</span></code></a></p></td>
+<td><p>NAME</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="magnet_pinn.preprocessing.simulation.html#module-magnet_pinn.preprocessing.simulation" title="magnet_pinn.preprocessing.simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulation</span></code></a></p></td>
+<td><p>NAME</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="magnet_pinn.preprocessing.voxelizing_mesh.html#module-magnet_pinn.preprocessing.voxelizing_mesh" title="magnet_pinn.preprocessing.voxelizing_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">voxelizing_mesh</span></code></a></p></td>
+<td><p>NAME</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -97,7 +589,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="magnet_pinn.models.html" class="btn btn-neutral float-left" title="magnet_pinn.models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="magnet_pinn.physics.html" class="btn btn-neutral float-right" title="magnet_pinn.physics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="magnet_pinn.preprocessing.preprocessing.html" class="btn btn-neutral float-right" title="magnet_pinn.preprocessing.preprocessing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

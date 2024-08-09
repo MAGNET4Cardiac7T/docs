@@ -1,0 +1,35 @@
+magnet\_pinn.preprocessing.preprocessing
+========================================
+
+.. automodule:: magnet_pinn.preprocessing.preprocessing
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      abstractmethod
+      fast_winding_number_for_meshes
+      listdir
+      makedirs
+      rearrange
+      reduce
+      repeat
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ABC
+      FieldReader
+      FieldReaderFactory
+      File
+      GridPreprocessing
+      MeshVoxelizer
+      PointPreprocessing
+      Preprocessing
+      PropertyReader
+      Simulation
+      Trimesh
+      tqdm
+   

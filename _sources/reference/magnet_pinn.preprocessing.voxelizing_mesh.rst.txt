@@ -1,0 +1,19 @@
+magnet\_pinn.preprocessing.voxelizing\_mesh
+===========================================
+
+.. automodule:: magnet_pinn.preprocessing.voxelizing_mesh
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      local_voxelize
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      MeshVoxelizer
+      Trimesh
+   
