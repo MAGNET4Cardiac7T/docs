@@ -1,0 +1,25 @@
+magnet\_pinn.data.dataset
+=========================
+
+.. automodule:: magnet_pinn.data.dataset
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      asdict
+      dataclass
+      pack
+      reduce
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Any
+      CoilEnumerationMagnetIterator
+      DataItem
+      MagnetIterator
+      PhaseAugmentedMagnetIterator
+   

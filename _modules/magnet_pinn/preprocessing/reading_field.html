@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magnet_pinn.preprocessing.reading_field &mdash; magnet-pinn 0.0.2 documentation</title>
+  <title>magnet_pinn.preprocessing.reading_field &mdash; magnet-pinn 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -16,7 +16,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=e3a6060d"></script>
+        <script src="../../../_static/documentation_options.js?v=47de8214"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/design-tabs.js?v=36754332"></script>
@@ -105,7 +105,7 @@
 
 <span class="n">E_FIELD_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;E-Field&quot;</span>
 <span class="n">H_FIELD_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;H-Field&quot;</span>
-<span class="n">POSISTIONS_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;Position&quot;</span>
+<span class="n">POSITIONS_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;Position&quot;</span>
 <span class="n">X_BOUNDS_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;Mesh line x&quot;</span>
 <span class="n">Y_BOUNDS_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;Mesh line y&quot;</span>
 <span class="n">Z_BOUNDS_DATABASE_KEY</span> <span class="o">=</span> <span class="s2">&quot;Mesh line z&quot;</span>
@@ -207,7 +207,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        format_points_list: bool</span>
+<span class="sd">        keep_grid_output_format: bool</span>
 <span class="sd">            if True, the reader will return the data in the pointslist form</span>
 
 <span class="sd">        Returns</span>
@@ -234,7 +234,7 @@
         <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">database_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         
-        <span class="k">return</span> <span class="n">POSISTIONS_DATABASE_KEY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">database_keys</span></div>
+        <span class="k">return</span> <span class="n">POSITIONS_DATABASE_KEY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">database_keys</span></div>
 
 
 
@@ -378,12 +378,24 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">rearrange</span><span class="p">(</span>
             <span class="p">[</span><span class="n">Ex</span><span class="p">,</span> <span class="n">Ey</span><span class="p">,</span> <span class="n">Ez</span><span class="p">],</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_compose_field_pattern</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compose_field_pattern</span><span class="p">(</span><span class="n">Ex</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_compose_field_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_compose_field_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method returns field array pattern.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: Tuple</span>
+<span class="sd">            The field components</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The field array pattern</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
     <span class="nd">@abstractmethod</span>
@@ -494,11 +506,28 @@
         <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">values</span>
     
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_compose_field_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;ax z y x -&gt; ax x y z&quot;</span>
+    <span class="k">def</span> <span class="nf">_compose_field_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The grid data field is an array with 3d grid structure (x, y, z). It checks and fixes axis order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">expected_shape</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">data_shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">expected_shape</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="n">axis_order</span> <span class="o">=</span> <span class="s2">&quot;x y z&quot;</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data_shape</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">expected_shape</span><span class="o">.</span><span class="n">values</span><span class="p">()))):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Inconsistent data shape&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">indices_we_got</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_shape</span><span class="p">)</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+            <span class="n">indices_we_expect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">expected_shape</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+            <span class="n">real_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">real_order</span><span class="p">[</span><span class="n">indices_we_got</span><span class="p">]</span> <span class="o">=</span> <span class="n">indices_we_expect</span>
+            <span class="n">real_order_axis_symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">expected_shape</span><span class="o">.</span><span class="n">keys</span><span class="p">()))[</span><span class="n">real_order</span><span class="p">]</span>
+            <span class="n">axis_order</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">real_order_axis_symbols</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ax </span><span class="si">{</span><span class="n">axis_order</span><span class="si">}</span><span class="s2"> -&gt; ax x y z&quot;</span>
 
-    
     <span class="k">def</span> <span class="nf">_compose_field_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_components</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compose together field components from different files</span>
@@ -562,9 +591,9 @@
 <span class="sd">        as a list of points.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">POSISTIONS_DATABASE_KEY</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">][:]</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">POSISTIONS_DATABASE_KEY</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">][:]</span>
-            <span class="n">z</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">POSISTIONS_DATABASE_KEY</span><span class="p">][</span><span class="s2">&quot;z&quot;</span><span class="p">][:]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">POSITIONS_DATABASE_KEY</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">][:]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">POSITIONS_DATABASE_KEY</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">][:]</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">POSITIONS_DATABASE_KEY</span><span class="p">][</span><span class="s2">&quot;z&quot;</span><span class="p">][:]</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">rearrange</span><span class="p">(</span>
             <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>
             <span class="s2">&quot;ax batch -&gt; batch ax&quot;</span>
@@ -591,7 +620,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span>
     
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_compose_field_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_compose_field_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method ignores the existing data because of assumption of 1d</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Inconsistent data shape&quot;</span><span class="p">)</span>
+        
         <span class="k">return</span> <span class="s2">&quot;ax batch -&gt; batch ax&quot;</span>
     
     <span class="k">def</span> <span class="nf">_compose_field_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_components</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>

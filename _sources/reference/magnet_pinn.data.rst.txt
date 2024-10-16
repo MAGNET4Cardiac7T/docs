@@ -1,0 +1,13 @@
+﻿magnet\_pinn.data
+=================
+
+.. automodule:: magnet_pinn.data
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   dataset
