@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magnet_pinn.preprocessing.simulation &mdash; magnet-pinn 0.0.4 documentation</title>
+  <title>magnet_pinn.data.utils &mdash; magnet-pinn 0.0.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -69,7 +69,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">magnet_pinn.preprocessing.simulation</li>
+      <li class="breadcrumb-item active">magnet_pinn.data.utils</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -78,53 +78,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for magnet_pinn.preprocessing.simulation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">NAME </span>
-<span class="sd">    simulation.py</span>
+  <h1>Source code for magnet_pinn.data.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<div class="viewcode-block" id="worker_init_fn">
+<a class="viewcode-back" href="../../../reference/magnet_pinn.data.utils.html#magnet_pinn.data.utils.worker_init_fn">[docs]</a>
+<span class="k">def</span> <span class="nf">worker_init_fn</span><span class="p">(</span><span class="n">worker_id</span><span class="p">):</span>
+     <span class="n">worker_info</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_worker_info</span><span class="p">()</span>
+     <span class="n">dataset</span> <span class="o">=</span> <span class="n">worker_info</span><span class="o">.</span><span class="n">dataset</span>  <span class="c1"># the dataset copy in this worker process</span>
+     <span class="n">overall_simulations</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">simulation_list</span>
+     <span class="n">num_workers</span> <span class="o">=</span> <span class="n">worker_info</span><span class="o">.</span><span class="n">num_workers</span>
 
-<span class="sd">DESCRIPTION</span>
-<span class="sd">    This module contains the Simulation dataclass, </span>
-<span class="sd">    which is used to store the data of a simulation.</span>
-
-<span class="sd">CLASSES</span>
-<span class="sd">    Simulation</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-
-<div class="viewcode-block" id="Simulation">
-<a class="viewcode-back" href="../../../reference/magnet_pinn.preprocessing.simulation.html#magnet_pinn.preprocessing.Simulation">[docs]</a>
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Simulation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A dataclass for storing the data of one numerical simulation of EM fields.</span>
-
-<span class="sd">        Attributes</span>
-<span class="sd">        ----------</span>
-<span class="sd">        name : str</span>
-<span class="sd">            The name of the simulation.</span>
-<span class="sd">        path : str</span>
-<span class="sd">            The path to the simulation data.</span>
-<span class="sd">        e_field : np.array, optional</span>
-<span class="sd">            The electric field data.</span>
-<span class="sd">        h_field : np.array, optional</span>
-<span class="sd">            The magnetic field data.    </span>
-<span class="sd">        object_masks : np.array, optional</span>
-<span class="sd">            The object masks.</span>
-<span class="sd">        features : np.array, optional</span>
-<span class="sd">            The physical features - permittivity, permeability, conductivity.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">e_field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">h_field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">object_masks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">features</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+     <span class="c1"># configure the dataset to only process the split workload</span>
+     <span class="n">worker_id</span> <span class="o">=</span> <span class="n">worker_info</span><span class="o">.</span><span class="n">id</span>
+     <span class="n">worker_simulations</span> <span class="o">=</span> <span class="n">overall_simulations</span><span class="p">[</span><span class="n">worker_id</span><span class="p">::</span><span class="n">num_workers</span><span class="p">]</span>
+     <span class="n">dataset</span><span class="o">.</span><span class="n">simulation_list</span> <span class="o">=</span> <span class="n">worker_simulations</span></div>
 
 </pre></div>
 

@@ -1,0 +1,25 @@
+magnet\_pinn.data.grid
+======================
+
+.. automodule:: magnet_pinn.data.grid
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      asdict
+      dataclass
+      einsum
+      pack
+      reduce
+      repeat
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Any
+      DataItem
+      MagnetGridIterator
+   

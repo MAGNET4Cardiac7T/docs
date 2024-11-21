@@ -11,3 +11,6 @@
    :recursive:
 
    dataset
+   grid
+   point
+   utils

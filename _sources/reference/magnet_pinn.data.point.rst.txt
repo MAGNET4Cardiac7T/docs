@@ -1,0 +1,26 @@
+magnet\_pinn.data.point
+=======================
+
+.. automodule:: magnet_pinn.data.point
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      asdict
+      dataclass
+      einsum
+      pack
+      rearrange
+      reduce
+      repeat
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Any
+      DataItem
+      MagnetPointIterator
+   

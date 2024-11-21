@@ -4,3 +4,9 @@
 .. automodule:: magnet_pinn.models
 
    
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      UNet3D
+   

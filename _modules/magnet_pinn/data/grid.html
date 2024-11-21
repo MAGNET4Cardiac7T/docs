@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magnet_pinn.data.grid &mdash; magnet-pinn 0.0.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dynabench.css?v=56ba74db" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=8c5712d9"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            magnet-pinn
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../papers.html">Paper List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results.html">Benchmark Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">magnet-pinn</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magnet_pinn.data.grid</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for magnet_pinn.data.grid</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">NAME</span>
+<span class="sd">    dataset.py</span>
+<span class="sd">DESCRIPTION</span>
+<span class="sd">    This module contains classes for loading the magnetostatic simulation data.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">asdict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+
+
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
+<span class="kn">from</span> <span class="nn">einops</span> <span class="kn">import</span> <span class="n">reduce</span><span class="p">,</span> <span class="n">pack</span><span class="p">,</span> <span class="n">einsum</span><span class="p">,</span> <span class="n">repeat</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">magnet_pinn.preprocessing.preprocessing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">VOXEL_SIZE_OUT_KEY</span><span class="p">,</span>
+    <span class="n">ANTENNA_MASKS_OUT_KEY</span><span class="p">,</span>
+    <span class="n">MIN_EXTENT_OUT_KEY</span><span class="p">,</span>
+    <span class="n">MAX_EXTENT_OUT_KEY</span><span class="p">,</span>
+    <span class="n">FEATURES_OUT_KEY</span><span class="p">,</span>
+    <span class="n">E_FIELD_OUT_KEY</span><span class="p">,</span>
+    <span class="n">H_FIELD_OUT_KEY</span><span class="p">,</span>
+    <span class="n">SUBJECT_OUT_KEY</span><span class="p">,</span>
+    <span class="n">PROCESSED_SIMULATIONS_DIR_PATH</span><span class="p">,</span>
+    <span class="n">PROCESSED_ANTENNA_DIR_PATH</span><span class="p">,</span>
+    <span class="n">TRUNCATION_COEFFICIENTS_OUT_KEY</span><span class="p">,</span>
+    <span class="n">DTYPE_OUT_KEY</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="DataItem">
+<a class="viewcode-back" href="../../../reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DataItem</span><span class="p">:</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]</span>
+    <span class="n">subject</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]</span>
+    <span class="n">simulation</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">phase</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">coils</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">truncation_coefficients</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="MagnetGridIterator">
+<a class="viewcode-back" href="../../../reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.MagnetGridIterator">[docs]</a>
+<span class="k">class</span> <span class="nc">MagnetGridIterator</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">IterableDataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Iterator for loading the magnetostatic simulation data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">phase_samples_per_simulation</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">PROCESSED_SIMULATIONS_DIR_PATH</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coils_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">PROCESSED_ANTENNA_DIR_PATH</span><span class="p">,</span> <span class="s2">&quot;antenna.h5&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_dir</span><span class="p">,</span> <span class="s2">&quot;*.h5&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coils</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_coils</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_coils</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coils</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase_samples_per_simulation</span> <span class="o">=</span> <span class="n">phase_samples_per_simulation</span>
+
+    <span class="k">def</span> <span class="nf">_get_simulation_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">simulation</span><span class="p">)[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_read_coils</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method reads coils masks from the h5 file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        npt.NDArray[np.bool_]</span>
+<span class="sd">            Coils masks array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coils_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">coils</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">ANTENNA_MASKS_OUT_KEY</span><span class="p">][:]</span>
+        <span class="k">return</span> <span class="n">coils</span>
+    
+    <span class="k">def</span> <span class="nf">_load_simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataItem</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads simulation data from the h5 file.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        index : int</span>
+<span class="sd">            Index of the simulation file</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataItem</span>
+<span class="sd">            DataItem object with the loaded data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">simulation_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_fields</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">E_FIELD_OUT_KEY</span><span class="p">,</span> <span class="n">H_FIELD_OUT_KEY</span><span class="p">)</span>
+            <span class="n">input_features</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">FEATURES_OUT_KEY</span><span class="p">][:]</span>
+            <span class="n">subject</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">SUBJECT_OUT_KEY</span><span class="p">][:]</span>
+
+            <span class="k">return</span> <span class="n">DataItem</span><span class="p">(</span>
+                <span class="nb">input</span><span class="o">=</span><span class="n">input_features</span><span class="p">,</span>
+                <span class="n">subject</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">simulation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_simulation_name</span><span class="p">(</span><span class="n">simulation_path</span><span class="p">),</span>
+                <span class="n">field</span><span class="o">=</span><span class="n">field</span><span class="p">,</span>
+                <span class="n">phase</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_coils</span><span class="p">),</span>
+                <span class="n">mask</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_coils</span><span class="p">),</span>
+                <span class="n">coils</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">coils</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">DTYPE_OUT_KEY</span><span class="p">],</span>
+                <span class="n">truncation_coefficients</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">TRUNCATION_COEFFICIENTS_OUT_KEY</span><span class="p">]</span>
+            <span class="p">)</span>
+        
+
+    <span class="k">def</span> <span class="nf">_read_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">,</span> <span class="n">efield_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hfield_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]:</span>
+        <span class="k">def</span> <span class="nf">read_field</span><span class="p">(</span><span class="n">field_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]]:</span>
+            <span class="n">field_val</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">field_key</span><span class="p">][:]</span>
+            <span class="k">if</span> <span class="n">field_val</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">field_val</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">field_val</span><span class="o">.</span><span class="n">imag</span>
+            <span class="k">return</span> <span class="n">field_val</span><span class="p">[</span><span class="s2">&quot;re&quot;</span><span class="p">],</span> <span class="n">field_val</span><span class="p">[</span><span class="s2">&quot;im&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A method for reading the field from the h5 file.</span>
+<span class="sd">        Reads and splits the field into real and imaginary parts.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        f : h5py.File</span>
+<span class="sd">            h5 file desc    pass</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dict</span>
+<span class="sd">            A dictionary with `re_field_key` and `im_field_key` keys</span>
+<span class="sd">            with real and imaginary parts of the field</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">re_efield</span><span class="p">,</span> <span class="n">im_efield</span> <span class="o">=</span> <span class="n">read_field</span><span class="p">(</span><span class="n">efield_key</span><span class="p">)</span>
+        <span class="n">re_hfield</span><span class="p">,</span> <span class="n">im_hfield</span> <span class="o">=</span> <span class="n">read_field</span><span class="p">(</span><span class="n">hfield_key</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">re_efield</span><span class="p">,</span> <span class="n">im_efield</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">re_hfield</span><span class="p">,</span> <span class="n">im_hfield</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">simulation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation_list</span><span class="p">:</span>
+            <span class="n">loaded_simulation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_simulation</span><span class="p">(</span><span class="n">simulation</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase_samples_per_simulation</span><span class="p">):</span>
+                <span class="n">augmented_simulation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_augment_simulation</span><span class="p">(</span><span class="n">loaded_simulation</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">augmented_simulation</span><span class="o">.</span><span class="vm">__dict__</span>
+    
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_list</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">phase_samples_per_simulation</span>
+    
+    <span class="k">def</span> <span class="nf">_augment_simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">:</span> <span class="n">DataItem</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataItem</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method for augmenting the simulation data.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        simulation : DataItem</span>
+<span class="sd">            DataItem object with the simulation data</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataItem</span>
+<span class="sd">            augmented DataItem object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">phase</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_phase_and_mask</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">simulation</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">phase_index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">field_shifted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_shift_field</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">field</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        <span class="n">coils_shifted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_shift_coils</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">DataItem</span><span class="p">(</span>
+            <span class="nb">input</span><span class="o">=</span><span class="n">simulation</span><span class="o">.</span><span class="n">input</span><span class="p">,</span>
+            <span class="n">subject</span><span class="o">=</span><span class="n">simulation</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span>
+            <span class="n">simulation</span><span class="o">=</span><span class="n">simulation</span><span class="o">.</span><span class="n">simulation</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">field_shifted</span><span class="p">,</span>
+            <span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span>
+            <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span>
+            <span class="n">coils</span><span class="o">=</span><span class="n">coils_shifted</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">simulation</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="n">truncation_coefficients</span><span class="o">=</span><span class="n">simulation</span><span class="o">.</span><span class="n">truncation_coefficients</span>
+        <span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_sample_phase_and_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                               <span class="n">phase_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                               <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+                               <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method for sampling the phase and mask for the simulation.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        phase_index : int</span>
+<span class="sd">            Index of the phase sample</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        npt.NDArray[np.float32]:</span>
+<span class="sd">            phase coefficients</span>
+<span class="sd">        npt.NDArray[np.bool_]:</span>
+<span class="sd">            mask for the phase coefficients</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_coils</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_coils</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_coils</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">phase</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">),</span> <span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>    
+    
+    <span class="k">def</span> <span class="nf">_phase_shift_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                           <span class="n">fields</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">],</span> 
+                           <span class="n">phase</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">],</span> 
+                           <span class="n">mask</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">],</span> 
+                           <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]:</span>
+        <span class="n">re_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="o">*</span> <span class="n">mask</span>
+        <span class="n">im_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="o">*</span> <span class="n">mask</span>
+        <span class="n">coeffs_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">re_phase</span><span class="p">,</span> <span class="o">-</span><span class="n">im_phase</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">coeffs_im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">re_phase</span><span class="p">,</span> <span class="n">im_phase</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">coeffs_real</span><span class="p">,</span> <span class="n">coeffs_im</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="s1">&#39;reimout reim coils -&gt; hf reimout reim coils&#39;</span><span class="p">,</span> <span class="n">hf</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">field_shift</span> <span class="o">=</span> <span class="n">einsum</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="s1">&#39;hf reim fieldxyz x y z coils, hf reimout reim coils -&gt; hf reimout fieldxyz x y z&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">field_shift</span>
+
+
+    <span class="k">def</span> <span class="nf">_phase_shift_coils</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                           <span class="n">phase</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">],</span>
+                           <span class="n">mask</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]</span>
+                           <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]:</span>
+        <span class="n">re_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="o">*</span> <span class="n">mask</span>
+        <span class="n">im_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="o">*</span> <span class="n">mask</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">re_phase</span><span class="p">,</span> <span class="n">im_phase</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">coils_shift</span> <span class="o">=</span> <span class="n">einsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coils</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="s1">&#39;x y z coils, reim coils -&gt; reim x y z&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">coils_shift</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Andrzej Dulny.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+magnet\_pinn.data.utils
+=======================
+
+.. automodule:: magnet_pinn.data.utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      worker_init_fn
+   

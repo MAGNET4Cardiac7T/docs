@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; magnet-pinn 0.0.3 documentation</title>
+  <title>Index &mdash; magnet-pinn 0.0.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=47de8214"></script>
+        <script src="_static/documentation_options.js?v=8c5712d9"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/design-tabs.js?v=36754332"></script>
@@ -95,6 +95,7 @@
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#W"><strong>W</strong></a>
  
 </div>
 <h2 id="C">C</h2>
@@ -102,6 +103,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.CoilEnumerationMagnetIterator">CoilEnumerationMagnetIterator (class in magnet_pinn.data.dataset)</a>
 </li>
+      <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem.coils">coils (magnet_pinn.data.grid.DataItem attribute)</a>
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem.coils">(magnet_pinn.data.point.DataItem attribute)</a>
+</li>
+      </ul></li>
       <li><a href="reference/magnet_pinn.preprocessing.html#magnet_pinn.preprocessing.GridReader.coordinates">coordinates (magnet_pinn.preprocessing.GridReader property)</a>
 
       <ul>
@@ -135,11 +142,23 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.DataItem">DataItem (class in magnet_pinn.data.dataset)</a>
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem">(class in magnet_pinn.data.grid)</a>
 </li>
+        <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem">(class in magnet_pinn.data.point)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.DataItem.dtype">dtype (magnet_pinn.data.dataset.DataItem attribute)</a>
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem.dtype">(magnet_pinn.data.grid.DataItem attribute)</a>
 </li>
+        <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem.dtype">(magnet_pinn.data.point.DataItem attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -166,6 +185,12 @@
 
       <ul>
         <li><a href="reference/magnet_pinn.preprocessing.simulation.html#magnet_pinn.preprocessing.simulation.Simulation.features">(magnet_pinn.preprocessing.simulation.Simulation attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem.field">field (magnet_pinn.data.grid.DataItem attribute)</a>
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem.field">(magnet_pinn.data.point.DataItem attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -222,10 +247,16 @@
 </li>
       <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.DataItem.im_hfield">im_hfield (magnet_pinn.data.dataset.DataItem attribute)</a>
 </li>
+      <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.DataItem.input">input (magnet_pinn.data.dataset.DataItem attribute)</a>
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem.input">(magnet_pinn.data.grid.DataItem attribute)</a>
+</li>
+        <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem.input">(magnet_pinn.data.point.DataItem attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.DataItem.input">input (magnet_pinn.data.dataset.DataItem attribute)</a>
-</li>
       <li><a href="reference/magnet_pinn.preprocessing.html#magnet_pinn.preprocessing.GridReader.is_grid">is_grid (magnet_pinn.preprocessing.GridReader attribute)</a>
 
       <ul>
@@ -250,6 +281,27 @@
 
       <ul>
         <li><a href="reference/magnet_pinn.data.dataset.html#module-magnet_pinn.data.dataset">module</a>
+</li>
+      </ul></li>
+      <li>
+    magnet_pinn.data.grid
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.grid.html#module-magnet_pinn.data.grid">module</a>
+</li>
+      </ul></li>
+      <li>
+    magnet_pinn.data.point
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.point.html#module-magnet_pinn.data.point">module</a>
+</li>
+      </ul></li>
+      <li>
+    magnet_pinn.data.utils
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.utils.html#module-magnet_pinn.data.utils">module</a>
 </li>
       </ul></li>
       <li>
@@ -310,8 +362,18 @@
         <li><a href="reference/magnet_pinn.preprocessing.voxelizing_mesh.html#module-magnet_pinn.preprocessing.voxelizing_mesh">module</a>
 </li>
       </ul></li>
+      <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.MagnetGridIterator">MagnetGridIterator (class in magnet_pinn.data.grid)</a>
+</li>
       <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.MagnetIterator">MagnetIterator (class in magnet_pinn.data.dataset)</a>
 </li>
+      <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.MagnetPointIterator">MagnetPointIterator (class in magnet_pinn.data.point)</a>
+</li>
+      <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem.mask">mask (magnet_pinn.data.grid.DataItem attribute)</a>
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem.mask">(magnet_pinn.data.point.DataItem attribute)</a>
+</li>
+      </ul></li>
       <li><a href="reference/magnet_pinn.preprocessing.html#magnet_pinn.preprocessing.MeshVoxelizer">MeshVoxelizer (class in magnet_pinn.preprocessing)</a>
 
       <ul>
@@ -325,6 +387,12 @@
         <li><a href="reference/magnet_pinn.data.html#module-magnet_pinn.data">magnet_pinn.data</a>
 </li>
         <li><a href="reference/magnet_pinn.data.dataset.html#module-magnet_pinn.data.dataset">magnet_pinn.data.dataset</a>
+</li>
+        <li><a href="reference/magnet_pinn.data.grid.html#module-magnet_pinn.data.grid">magnet_pinn.data.grid</a>
+</li>
+        <li><a href="reference/magnet_pinn.data.point.html#module-magnet_pinn.data.point">magnet_pinn.data.point</a>
+</li>
+        <li><a href="reference/magnet_pinn.data.utils.html#module-magnet_pinn.data.utils">magnet_pinn.data.utils</a>
 </li>
         <li><a href="reference/magnet_pinn.models.html#module-magnet_pinn.models">magnet_pinn.models</a>
 </li>
@@ -379,6 +447,12 @@
         <li><a href="reference/magnet_pinn.preprocessing.simulation.html#magnet_pinn.preprocessing.simulation.Simulation.path">(magnet_pinn.preprocessing.simulation.Simulation attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem.phase">phase (magnet_pinn.data.grid.DataItem attribute)</a>
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem.phase">(magnet_pinn.data.point.DataItem attribute)</a>
+</li>
+      </ul></li>
       <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.PhaseAugmentedMagnetIterator">PhaseAugmentedMagnetIterator (class in magnet_pinn.data.dataset)</a>
 </li>
       <li><a href="reference/magnet_pinn.preprocessing.html#magnet_pinn.preprocessing.PointPreprocessing">PointPreprocessing (class in magnet_pinn.preprocessing)</a>
@@ -395,6 +469,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem.positions">positions (magnet_pinn.data.point.DataItem attribute)</a>
+</li>
       <li><a href="reference/magnet_pinn.preprocessing.preprocessing.html#magnet_pinn.preprocessing.preprocessing.Preprocessing">Preprocessing (class in magnet_pinn.preprocessing.preprocessing)</a>
 </li>
       <li><a href="reference/magnet_pinn.preprocessing.html#magnet_pinn.preprocessing.MeshVoxelizer.process_mesh">process_mesh() (magnet_pinn.preprocessing.MeshVoxelizer method)</a>
@@ -441,12 +517,24 @@
         <li><a href="reference/magnet_pinn.preprocessing.simulation.html#magnet_pinn.preprocessing.simulation.Simulation">(class in magnet_pinn.preprocessing.simulation)</a>
 </li>
       </ul></li>
+      <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.DataItem.simulation">simulation (magnet_pinn.data.dataset.DataItem attribute)</a>
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem.simulation">(magnet_pinn.data.grid.DataItem attribute)</a>
+</li>
+        <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem.simulation">(magnet_pinn.data.point.DataItem attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.DataItem.simulation">simulation (magnet_pinn.data.dataset.DataItem attribute)</a>
-</li>
       <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.DataItem.subject">subject (magnet_pinn.data.dataset.DataItem attribute)</a>
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem.subject">(magnet_pinn.data.grid.DataItem attribute)</a>
 </li>
+        <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem.subject">(magnet_pinn.data.point.DataItem attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -454,6 +542,20 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/magnet_pinn.data.dataset.html#magnet_pinn.data.dataset.DataItem.truncation_coefficients">truncation_coefficients (magnet_pinn.data.dataset.DataItem attribute)</a>
+
+      <ul>
+        <li><a href="reference/magnet_pinn.data.grid.html#magnet_pinn.data.grid.DataItem.truncation_coefficients">(magnet_pinn.data.grid.DataItem attribute)</a>
+</li>
+        <li><a href="reference/magnet_pinn.data.point.html#magnet_pinn.data.point.DataItem.truncation_coefficients">(magnet_pinn.data.point.DataItem attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/magnet_pinn.data.utils.html#magnet_pinn.data.utils.worker_init_fn">worker_init_fn() (in module magnet_pinn.data.utils)</a>
 </li>
   </ul></td>
 </tr></table>
